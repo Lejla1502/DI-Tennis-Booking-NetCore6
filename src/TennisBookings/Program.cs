@@ -26,6 +26,11 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<ICourtService, CourtService>();
+builder.Services.AddScoped<ICourtBookingService, CourtBookingService>();
+builder.Services.AddScoped<IUtcTimeService, TimeService>();
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages(options =>
 {
