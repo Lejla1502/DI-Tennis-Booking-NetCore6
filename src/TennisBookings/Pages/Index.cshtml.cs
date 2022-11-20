@@ -5,10 +5,12 @@ namespace TennisBookings.Pages
     public class IndexModel : PageModel
     {
 		private readonly IWeatherForecaster _weatherForecaster;
+		private readonly ILogger _logger;
 
-		public IndexModel(IWeatherForecaster weatherForecaster)
+		public IndexModel(IWeatherForecaster weatherForecaster, ILogger<IndexModel> logger)
 		{
 			_weatherForecaster = weatherForecaster;
+			_logger = logger;
 		}
 		public string WeatherDescription { get; private set; } =
             "We don't have the latest weather information right now, " +
@@ -55,6 +57,7 @@ namespace TennisBookings.Pages
             catch
             {
 				// TODO
+				_logger.LogError("Oh noo!!!");
 			}
         }
     }

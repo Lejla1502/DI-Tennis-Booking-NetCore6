@@ -30,7 +30,7 @@ builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<ICourtService, CourtService>();
 builder.Services.AddScoped<ICourtBookingService, CourtBookingService>();
 builder.Services.AddScoped<IUtcTimeService, TimeService>();
-builder.Services.AddScoped<IWeatherForecaster, RandomWeatherForecaster>();
+builder.Services.AddTransient<IWeatherForecaster, RandomWeatherForecaster>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages(options =>
