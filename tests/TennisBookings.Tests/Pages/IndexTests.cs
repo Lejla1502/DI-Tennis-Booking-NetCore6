@@ -1,3 +1,6 @@
+using Microsoft.Extensions.Options;
+using TennisBookings.Configuration;
+
 namespace TennisBookings.Tests.Pages;
 
 public class IndexTests
@@ -5,7 +8,9 @@ public class IndexTests
 	[Fact]
 	public async Task ReturnsExpectedViewModel_WhenWeatherIsSun()
 	{
-		var sut = new IndexModel(new SunForcaster(), NullLogger<IndexModel>.Instance);
+		var sut = new IndexModel(new SunForcaster(),
+			NullLogger<IndexModel>.Instance,
+			new EnabledConfig());
 
 		await sut.OnGet();
 
@@ -15,10 +20,25 @@ public class IndexTests
 	[Fact]
 	public async Task ReturnsExpectedViewModel_WhenWeatherIsRain()
 	{
-		var sut = new IndexModel(new RainForcaster(), NullLogger<IndexModel>.Instance);
+		var sut = new IndexModel(new RainForcaster(),
+			NullLogger<IndexModel>.Instance,
+			new EnabledConfig());
 		await sut.OnGet();
 
 		Assert.Contains("We're sorry but it's raining here.", sut.WeatherDescription);
+	}
+
+	private class EnabledConfig:IOptionsSnapshot<FeaturesConfiguration>
+	{
+		public FeaturesConfiguration Value => new FeaturesConfiguration
+		{
+			EnableWeatherForcast = true
+		};
+
+		public FeaturesConfiguration Get(string name)
+		{
+			throw new NotImplementedException();
+		}
 	}
 
 	private class SunForcaster:IWeatherForecaster

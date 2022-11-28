@@ -32,6 +32,8 @@ builder.Services.AddScoped<ICourtBookingService, CourtBookingService>();
 builder.Services.AddScoped<IUtcTimeService, TimeService>();
 builder.Services.AddTransient<IWeatherForecaster, AmazingWeatherForcaster>();
 
+builder.Services.Configure<FeaturesConfiguration>(builder.Configuration.GetSection("Features"));
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages(options =>
 {

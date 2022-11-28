@@ -30,7 +30,7 @@ namespace TennisBookings.Pages
 
 			ShowWeatherForecast = _config.EnableWeatherForcast;
 
-			//we're calling ShowWeatherForcast only if its been enabled by configuration
+			//we're calling ShowWeatherForcast only if WeatherFeature has been enabled by configuration
 			if(ShowWeatherForecast)
 			{
 				try
