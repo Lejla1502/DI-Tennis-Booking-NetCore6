@@ -6,11 +6,13 @@ namespace ServiceLifetimeDemonstration.Pages
     {
         private readonly ILogger<IndexModel> _logger;
 		private readonly IGuidService _guidService;
+		private readonly DisposableService _disposableService;
 
-		public IndexModel(ILogger<IndexModel> logger, IGuidService guidService)
+		public IndexModel(ILogger<IndexModel> logger, IGuidService guidService, DisposableService disposableService)
         {
             _logger = logger;
 			_guidService = guidService;
+			_disposableService = disposableService;
 		}
 
 		public string Guid { get; private set; } = "Missing";

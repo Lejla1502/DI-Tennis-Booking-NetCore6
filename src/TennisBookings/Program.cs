@@ -28,8 +28,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<ICourtService, CourtService>();
+
+builder.Services.AddScoped<ICourtBookingManager, CourtBookingManager>();
+builder.Services.Configure<BookingConfiguration>(builder.Configuration.GetSection("CourtBookings"));
+builder.Services.AddScoped<IBookingRuleProcessor, BookingRuleProcessor>();
+builder.Services.AddSingleton<INotificationService, EmailNotificationService>();
+
 builder.Services.AddScoped<ICourtBookingService, CourtBookingService>();
-builder.Services.AddScoped<IUtcTimeService, TimeService>();
+builder.Services.AddSingleton<IUtcTimeService, TimeService>();
+
+
 builder.Services.AddTransient<IWeatherForecaster, AmazingWeatherForcaster>();
 
 builder.Services.Configure<FeaturesConfiguration>(builder.Configuration.GetSection("Features"));

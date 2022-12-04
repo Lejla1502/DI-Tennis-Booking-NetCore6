@@ -4,6 +4,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSingleton<IGuidService,GuidService>();
+builder.Services.AddSingleton<IGuidTrimmer, GuidTrimmer>();
+builder.Services.AddScoped<DisposableService>();
 
 var app = builder.Build();
 
