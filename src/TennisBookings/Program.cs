@@ -27,8 +27,23 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
+//creating Service Descriptors manually
+
+/*var sd1= new ServiceDescriptor(typeof(IWeatherForecaster), typeof(AmazingWeatherForcaster), ServiceLifetime.Transient);
+
+var sd2 = ServiceDescriptor.Describe(typeof(IWeatherForecaster), typeof(AmazingWeatherForcaster), ServiceLifetime.Transient);
+
+var sd3 = ServiceDescriptor.Transient(typeof(IWeatherForecaster), typeof(AmazingWeatherForcaster));
+
+var sd4 = ServiceDescriptor.Transient<IWeatherForecaster, AmazingWeatherForcaster>();
+
+*/
+
 builder.Services.TryAddScoped<IBookingService, BookingService>();
 builder.Services.TryAddScoped<ICourtService, CourtService>();
+
 
 builder.Services.TryAddScoped<ICourtBookingManager, CourtBookingManager>();
 builder.Services.Configure<BookingConfiguration>(builder.Configuration.GetSection("CourtBookings"));
@@ -38,8 +53,14 @@ builder.Services.TryAddSingleton<INotificationService, EmailNotificationService>
 builder.Services.TryAddScoped<ICourtBookingService, CourtBookingService>();
 builder.Services.TryAddSingleton<IUtcTimeService, TimeService>();
 
+//when using Add method, RandomWeatherForecaster will be resolved from this, because it is last
+//builder.Services.AddSingleton<IWeatherForecaster, AmazingWeatherForcaster>();
+//builder.Services.AddSingleton<IWeatherForecaster, RandomWeatherForecaster>();
 
-builder.Services.AddTransient<IWeatherForecaster, AmazingWeatherForcaster>();
+//when using TryAdd, AmazingWeatherForecaster will be resolved, because
+//TryAdd will not register other service if there is already type registered for that service
+builder.Services.AddSingleton<IWeatherForecaster, AmazingWeatherForcaster>();
+builder.Services.AddSingleton<IWeatherForecaster, RandomWeatherForecaster>();
 
 builder.Services.Configure<FeaturesConfiguration>(builder.Configuration.GetSection("Features"));
 
