@@ -23,19 +23,20 @@ global using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using TennisBookings.BackgroundService;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IBookingService, BookingService>();
-builder.Services.AddScoped<ICourtService, CourtService>();
+builder.Services.TryAddScoped<IBookingService, BookingService>();
+builder.Services.TryAddScoped<ICourtService, CourtService>();
 
-builder.Services.AddScoped<ICourtBookingManager, CourtBookingManager>();
+builder.Services.TryAddScoped<ICourtBookingManager, CourtBookingManager>();
 builder.Services.Configure<BookingConfiguration>(builder.Configuration.GetSection("CourtBookings"));
-builder.Services.AddScoped<IBookingRuleProcessor, BookingRuleProcessor>();
-builder.Services.AddSingleton<INotificationService, EmailNotificationService>();
+builder.Services.TryAddScoped<IBookingRuleProcessor, BookingRuleProcessor>();
+builder.Services.TryAddSingleton<INotificationService, EmailNotificationService>();
 
-builder.Services.AddScoped<ICourtBookingService, CourtBookingService>();
-builder.Services.AddSingleton<IUtcTimeService, TimeService>();
+builder.Services.TryAddScoped<ICourtBookingService, CourtBookingService>();
+builder.Services.TryAddSingleton<IUtcTimeService, TimeService>();
 
 
 builder.Services.AddTransient<IWeatherForecaster, AmazingWeatherForcaster>();
