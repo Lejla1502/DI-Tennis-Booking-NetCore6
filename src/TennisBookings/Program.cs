@@ -26,6 +26,18 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//creating Service Descriptors manually
+
+/*var sd1= new ServiceDescriptor(typeof(IWeatherForecaster), typeof(AmazingWeatherForcaster), ServiceLifetime.Transient);
+
+var sd2 = ServiceDescriptor.Describe(typeof(IWeatherForecaster), typeof(AmazingWeatherForcaster), ServiceLifetime.Transient);
+
+var sd3 = ServiceDescriptor.Transient(typeof(IWeatherForecaster), typeof(AmazingWeatherForcaster));
+
+var sd4 = ServiceDescriptor.Transient<IWeatherForecaster, AmazingWeatherForcaster>();
+
+*/
+
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<ICourtService, CourtService>();
 
