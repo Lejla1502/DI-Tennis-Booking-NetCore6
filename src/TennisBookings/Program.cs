@@ -23,8 +23,11 @@ global using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using TennisBookings.BackgroundService;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 //creating Service Descriptors manually
 
@@ -38,19 +41,26 @@ var sd4 = ServiceDescriptor.Transient<IWeatherForecaster, AmazingWeatherForcaste
 
 */
 
-builder.Services.AddScoped<IBookingService, BookingService>();
-builder.Services.AddScoped<ICourtService, CourtService>();
+builder.Services.TryAddScoped<IBookingService, BookingService>();
+builder.Services.TryAddScoped<ICourtService, CourtService>();
 
-builder.Services.AddScoped<ICourtBookingManager, CourtBookingManager>();
+
+builder.Services.TryAddScoped<ICourtBookingManager, CourtBookingManager>();
 builder.Services.Configure<BookingConfiguration>(builder.Configuration.GetSection("CourtBookings"));
-builder.Services.AddScoped<IBookingRuleProcessor, BookingRuleProcessor>();
-builder.Services.AddSingleton<INotificationService, EmailNotificationService>();
+builder.Services.TryAddScoped<IBookingRuleProcessor, BookingRuleProcessor>();
+builder.Services.TryAddSingleton<INotificationService, EmailNotificationService>();
 
-builder.Services.AddScoped<ICourtBookingService, CourtBookingService>();
-builder.Services.AddSingleton<IUtcTimeService, TimeService>();
+builder.Services.TryAddScoped<ICourtBookingService, CourtBookingService>();
+builder.Services.TryAddSingleton<IUtcTimeService, TimeService>();
 
+//when using Add method, RandomWeatherForecaster will be resolved from this, because it is last
+//builder.Services.AddSingleton<IWeatherForecaster, AmazingWeatherForcaster>();
+//builder.Services.AddSingleton<IWeatherForecaster, RandomWeatherForecaster>();
 
-builder.Services.AddTransient<IWeatherForecaster, AmazingWeatherForcaster>();
+//when using TryAdd, AmazingWeatherForecaster will be resolved, because
+//TryAdd will not register other service if there is already type registered for that service
+builder.Services.AddSingleton<IWeatherForecaster, AmazingWeatherForcaster>();
+builder.Services.AddSingleton<IWeatherForecaster, RandomWeatherForecaster>();
 
 builder.Services.Configure<FeaturesConfiguration>(builder.Configuration.GetSection("Features"));
 
