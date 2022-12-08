@@ -1,4 +1,4 @@
-﻿namespace TennisBookings.Services.Bookings.Rules
+namespace TennisBookings.Services.Bookings.Rules
 {
 	public class BookingRuleProcessor : IBookingRuleProcessor
 	{
@@ -23,6 +23,7 @@
 					passedRules = false;
 				}
 			}
+
 
 			return (passedRules, errors);
 		}

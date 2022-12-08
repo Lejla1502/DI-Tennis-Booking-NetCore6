@@ -74,7 +74,8 @@ builder.Services.AddScoped<ICourtBookingRule, MemberCourtBookingsMaxHoursPerDayR
 //and so that this can work, we also need to add configuration for rules
 builder.Services.Configure<ClubConfiguration>(builder.Configuration.GetSection("ClubSettings"));
 
-
+//custom made rule
+builder.Services.AddSingleton<ICourtBookingRule, DateTimeBookingMadeInFuture>();
 
 
 builder.Services.AddControllersWithViews();
