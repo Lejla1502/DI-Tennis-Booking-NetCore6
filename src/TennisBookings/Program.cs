@@ -72,7 +72,6 @@ builder.Services.AddScoped<ICourtBookingRule, MemberBookingsMustNotOverlapRule>(
 builder.Services.AddScoped<ICourtBookingRule, MemberCourtBookingsMaxHoursPerDayRule>(); //it depends on ICourtBookingService which is scoped
 
 //and so that this can work, we also need to add configuration for rules
-
 builder.Services.Configure<ClubConfiguration>(builder.Configuration.GetSection("ClubSettings"));
 
 
