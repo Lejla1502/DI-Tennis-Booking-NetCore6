@@ -54,6 +54,20 @@ builder.Services.AddTransient<IWeatherForecaster, AmazingWeatherForcaster>();
 
 builder.Services.Configure<FeaturesConfiguration>(builder.Configuration.GetSection("Features"));
 
+//registering multiple implementations of ICourtBookingInterface -->>>>>>>>> HERE WE USE "ADD" BECAUSE WE WANT ALL IMPLEMENTATIONS
+builder.Services.AddSingleton<ICourtBookingRule, ClubIsOpenRule>();
+builder.Services.AddSingleton<ICourtBookingRule, MaxBookingLengthRule>();
+builder.Services.AddSingleton<ICourtBookingRule, MaxPeakTimeBookingLengthRule>();
+builder.Services.AddScoped<ICourtBookingRule, MemberBookingsMustNotOverlapRule>(); //it depends on ICourtBookingService which is scoped
+builder.Services.AddScoped<ICourtBookingRule, MemberCourtBookingsMaxHoursPerDayRule>(); //it depends on ICourtBookingService which is scoped
+
+//and so that this can work, we also need to add configuration for rules
+
+builder.Services.Configure<ClubConfiguration>(builder.Configuration.GetSection("ClubSettings"));
+
+
+
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages(options =>
 {
