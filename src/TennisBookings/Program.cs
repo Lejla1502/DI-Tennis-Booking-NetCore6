@@ -78,6 +78,30 @@ builder.Services.Configure<ClubConfiguration>(builder.Configuration.GetSection("
 builder.Services.AddSingleton<ICourtBookingRule, DateTimeBookingMadeInFuture>();
 
 
+//builder.Services.AddScoped<IUnavailabilityProvider, ClubClosedUnavailabilityProvider>();
+//builder.Services.AddScoped<IUnavailabilityProvider, CourtBookingUnavailabilityProvider>();
+//builder.Services.AddScoped<IUnavailabilityProvider, OutsideCourtUnavailabilityProvider>();
+//builder.Services.AddScoped<IUnavailabilityProvider, UpcomingHoursUnavailabilityProvider>();
+
+//when registering multiple implementations of an interface, it is recommended to use
+//TryAddEnumerable in case we have duplicates (because every single one would be registered, and
+//sometimes it can lead to multiple side effects
+
+//in order to implement TryAddEnumerable, we also need to work with service descriptors
+builder.Services.TryAddEnumerable(new ServiceDescriptor[]
+{
+	ServiceDescriptor.Scoped<IUnavailabilityProvider, ClubClosedUnavailabilityProvider>(),
+	ServiceDescriptor.Scoped<IUnavailabilityProvider, ClubClosedUnavailabilityProvider>(),
+	ServiceDescriptor.Scoped<IUnavailabilityProvider, CourtBookingUnavailabilityProvider>(),
+	ServiceDescriptor.Scoped<IUnavailabilityProvider, OutsideCourtUnavailabilityProvider>(),
+	ServiceDescriptor.Scoped<IUnavailabilityProvider, UpcomingHoursUnavailabilityProvider>()
+});
+//here we are creating an array of service descriptors for services we need
+//and even though we've registeres ClubClosed.. twice, it will only get resolved once
+
+
+
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages(options =>
 {
