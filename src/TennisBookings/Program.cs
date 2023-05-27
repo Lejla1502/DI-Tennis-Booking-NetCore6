@@ -113,6 +113,9 @@ builder.Services.TryAddSingleton<ILoggedInUserGreetingService>(sp =>
 //With this change, the container owns the creation of instance, and if necessary,
 //could dispose of it correctly
 
+//Registering Open Generics
+builder.Services.TryAddSingleton(typeof(IDistributedCache<>), typeof(DistributedCache<>));
+
 //and so that this can work, we also need to add configuration for rules
 builder.Services.Configure<ClubConfiguration>(builder.Configuration.GetSection("ClubSettings"));
 

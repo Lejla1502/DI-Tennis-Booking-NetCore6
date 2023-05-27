@@ -8,14 +8,17 @@ namespace TennisBookings.Pages
         private readonly UserManager<TennisBookingsUser> _userManager;
         private readonly ICourtBookingService _courtBookingService;
 		private readonly ILoggedInUserGreetingService _loggedInUserGreetingService;
+		private readonly IDistributedCache<UserGreeting> _cache;
 
 		public BookingsModel(UserManager<TennisBookingsUser> userManager,
 			ICourtBookingService courtBookingService,
-			ILoggedInUserGreetingService loggedInUserGreetingService)
+			ILoggedInUserGreetingService loggedInUserGreetingService,
+			IDistributedCache<UserGreeting> cache)
         {
             _userManager = userManager;
             _courtBookingService = courtBookingService;
 			_loggedInUserGreetingService = loggedInUserGreetingService;
+			_cache = cache;
 		}
 
         public IEnumerable<IGrouping<DateTime, CourtBooking>> CourtBookings { get; set; } = Array.Empty<IGrouping<DateTime, CourtBooking>>();
@@ -36,9 +39,22 @@ namespace TennisBookings.Pages
 
             if (user.Member is not null)
 			{
-				Greeting = _loggedInUserGreetingService.GetLoggedInGreeting(user.Member.Forename);
+				/*Greeting = _loggedInUserGreetingService.GetLoggedInGreeting(user.Member.Forename);
 				var bookings = await _courtBookingService.GetFutureBookingsForMemberAsync(user.Member);
-                CourtBookings = bookings.GroupBy(x => x.StartDateTime.Date);
+                CourtBookings = bookings.GroupBy(x => x.StartDateTime.Date);*/
+				var cacheKey = $"user_greeting_{user.Id}";
+
+				var (isCached, greeting) = await _cache.TryGetValueAsync(cacheKey);
+				if (!isCached)
+				{
+					greeting = _loggedInUserGreetingService.GetLoggedInGreeting(user.Member.Forename);
+					await _cache.SetAsync(cacheKey, greeting, 60);
+				}
+
+				Greeting = greeting?.Greeting ?? "Hi friend!";
+
+				var bookings = await _courtBookingService.GetFutureBookingsForMemberAsync(user.Member);
+				CourtBookings = bookings.GroupBy(booking => booking.StartDateTime.Date);
             }
 
             return Page();
