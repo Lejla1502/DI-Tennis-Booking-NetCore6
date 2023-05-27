@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using TennisBookings.Configuration;
+using TennisBookings.Services.Membership;
 
 namespace TennisBookings.Tests.Pages;
 

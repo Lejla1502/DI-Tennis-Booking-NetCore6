@@ -25,6 +25,7 @@ using TennisBookings.BackgroundService;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using TennisBookings.Services.Membership;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,6 +77,41 @@ builder.Services.AddScoped<ICourtBookingRule, MemberCourtBookingsMaxHoursPerDayR
 builder.Services.TryAddSingleton<IBookingConfiguration>(sp =>
 	sp.GetRequiredService<IOptions<BookingConfiguration>>().Value
 	 );
+
+//Implementation factory for when service provider can't automatically construct implementation
+builder.Services.Configure<MembershipConfiguration>(builder.Configuration.GetSection("Membership"));
+builder.Services.AddTransient<IMembershipAdvertBuilder, MembershipAdvertBuilder>();
+//we use singleton since implementation of MembershipAdvert i immutable and therefore thread safe
+builder.Services.AddSingleton<IMembershipAdvert>(sp =>
+{
+	var builder = sp.GetRequiredService<IMembershipAdvertBuilder>();
+	builder.WithDiscount(10m);
+	var advert = builder.Build();
+	return advert;
+});
+
+//contains no mutable state, and constructing its' instance is expensive - it reads from json file
+//leaving it like this will create two instances of GreetingService
+//builder.Services.TryAddSingleton<IHomePageGreetingService, GreetingService>();
+//builder.Services.TryAddSingleton<ILoggedInUserGreetingService, GreetingService>();
+//BUT, to prevent it we can use 2 ways:
+//1. - using overload of TryAddSingleton which accepts predefined instance of GreetingService
+//	var greetingService = new GreetingService(builder.Environment);
+//	builder.Services.TryAddSingleton<IHomePageGreetingService>(greetingService);
+//	builder.Services.TryAddSingleton<ILoggedInUserGreetingService>(greetingService);
+//downside -we are responsible for creating this instance
+//plus this instance is not automatically disposed of or released for garbage collection
+//2. - using implementation factories
+//we are creating singleton registration of GreetingService so that we can access it from serviceProvider
+builder.Services.TryAddSingleton<GreetingService>();
+builder.Services.TryAddSingleton<IHomePageGreetingService>(sp =>
+	sp.GetRequiredService<GreetingService>());
+builder.Services.TryAddSingleton<ILoggedInUserGreetingService>(sp =>
+	sp.GetRequiredService<GreetingService>());
+//since now container is now responsible for creating GreetingService, any dependencies it requires,
+//such as the IHostingEnvironment parameter can now be injected by the ServiceProvider at runtime
+//With this change, the container owns the creation of instance, and if necessary,
+//could dispose of it correctly
 
 //and so that this can work, we also need to add configuration for rules
 builder.Services.Configure<ClubConfiguration>(builder.Configuration.GetSection("ClubSettings"));

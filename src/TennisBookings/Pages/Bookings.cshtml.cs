@@ -7,12 +7,16 @@ namespace TennisBookings.Pages
     {
         private readonly UserManager<TennisBookingsUser> _userManager;
         private readonly ICourtBookingService _courtBookingService;
+		private readonly ILoggedInUserGreetingService _loggedInUserGreetingService;
 
-        public BookingsModel(UserManager<TennisBookingsUser> userManager, ICourtBookingService courtBookingService)
+		public BookingsModel(UserManager<TennisBookingsUser> userManager,
+			ICourtBookingService courtBookingService,
+			ILoggedInUserGreetingService loggedInUserGreetingService)
         {
             _userManager = userManager;
             _courtBookingService = courtBookingService;
-        }
+			_loggedInUserGreetingService = loggedInUserGreetingService;
+		}
 
         public IEnumerable<IGrouping<DateTime, CourtBooking>> CourtBookings { get; set; } = Array.Empty<IGrouping<DateTime, CourtBooking>>();
 
@@ -32,7 +36,7 @@ namespace TennisBookings.Pages
 
             if (user.Member is not null)
 			{
-				Greeting = $"{Greeting} {user.Member.Forename}";
+				Greeting = _loggedInUserGreetingService.GetLoggedInGreeting(user.Member.Forename);
 				var bookings = await _courtBookingService.GetFutureBookingsForMemberAsync(user.Member);
                 CourtBookings = bookings.GroupBy(x => x.StartDateTime.Date);
             }
