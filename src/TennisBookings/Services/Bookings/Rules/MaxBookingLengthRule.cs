@@ -4,11 +4,11 @@ namespace TennisBookings.Services.Bookings.Rules
 {
 	public class MaxBookingLengthRule : ICourtBookingRule
 	{
-		private readonly BookingConfiguration _bookingConfiguration;
+		private readonly IBookingConfiguration _bookingConfiguration;
 
-		public MaxBookingLengthRule(IOptions<BookingConfiguration> options)
+		public MaxBookingLengthRule(IBookingConfiguration config)
 		{
-			_bookingConfiguration = options.Value;
+			_bookingConfiguration = config;
 		}
 
 		public Task<bool> CompliesWithRuleAsync(CourtBooking booking)

@@ -9,6 +9,8 @@ namespace TennisBookings.Services.Bookings.Rules
 			_rules = rules;
 		}
 
+		//it is possible to resolve multiple instances of an interface, because they are being passed
+		//through IEnumerable
 		public async Task<(bool, IEnumerable<string>)> PassesAllRulesAsync(CourtBooking courtBooking)
 		{
 			var passedRules = true;

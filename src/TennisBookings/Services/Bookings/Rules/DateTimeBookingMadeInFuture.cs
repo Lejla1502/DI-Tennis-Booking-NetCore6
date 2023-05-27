@@ -17,6 +17,9 @@ namespace TennisBookings.Services.Bookings.Rules
 				return Task.FromResult(true);
 			else
 				return Task.FromResult(false);
+
+			//return Task.FromResult( _utcService.CurrentUtcDateTime < booking.StartDateTime);
 		}
+
 	}
 }

@@ -24,6 +24,7 @@ using Microsoft.Data.Sqlite;
 using TennisBookings.BackgroundService;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,8 +60,8 @@ builder.Services.TryAddSingleton<IUtcTimeService, TimeService>();
 
 //when using TryAdd, AmazingWeatherForecaster will be resolved, because
 //TryAdd will not register other service if there is already type registered for that service
-builder.Services.AddSingleton<IWeatherForecaster, AmazingWeatherForcaster>();
-builder.Services.AddSingleton<IWeatherForecaster, RandomWeatherForecaster>();
+builder.Services.TryAddSingleton<IWeatherForecaster, AmazingWeatherForcaster>();
+builder.Services.TryAddSingleton<IWeatherForecaster, RandomWeatherForecaster>();
 
 builder.Services.Configure<FeaturesConfiguration>(builder.Configuration.GetSection("Features"));
 
@@ -70,6 +71,11 @@ builder.Services.AddSingleton<ICourtBookingRule, MaxBookingLengthRule>();
 builder.Services.AddSingleton<ICourtBookingRule, MaxPeakTimeBookingLengthRule>();
 builder.Services.AddScoped<ICourtBookingRule, MemberBookingsMustNotOverlapRule>(); //it depends on ICourtBookingService which is scoped
 builder.Services.AddScoped<ICourtBookingRule, MemberCourtBookingsMaxHoursPerDayRule>(); //it depends on ICourtBookingService which is scoped
+
+//Forwarding registration by using implementation factory
+builder.Services.TryAddSingleton<IBookingConfiguration>(sp =>
+	sp.GetRequiredService<IOptions<BookingConfiguration>>().Value
+	 );
 
 //and so that this can work, we also need to add configuration for rules
 builder.Services.Configure<ClubConfiguration>(builder.Configuration.GetSection("ClubSettings"));
