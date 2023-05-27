@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using TennisBookings.Services.Membership;
+using TennisBookings.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,7 +50,6 @@ builder.Services.TryAddScoped<ICourtService, CourtService>();
 
 builder.Services.TryAddScoped<ICourtBookingManager, CourtBookingManager>();
 builder.Services.Configure<BookingConfiguration>(builder.Configuration.GetSection("CourtBookings"));
-builder.Services.TryAddScoped<IBookingRuleProcessor, BookingRuleProcessor>();
 builder.Services.TryAddSingleton<INotificationService, EmailNotificationService>();
 
 builder.Services.TryAddScoped<ICourtBookingService, CourtBookingService>();
@@ -66,12 +66,7 @@ builder.Services.TryAddSingleton<IWeatherForecaster, RandomWeatherForecaster>();
 
 builder.Services.Configure<FeaturesConfiguration>(builder.Configuration.GetSection("Features"));
 
-//registering multiple implementations of ICourtBookingInterface -->>>>>>>>> HERE WE USE "ADD" BECAUSE WE WANT ALL IMPLEMENTATIONS
-builder.Services.AddSingleton<ICourtBookingRule, ClubIsOpenRule>();
-builder.Services.AddSingleton<ICourtBookingRule, MaxBookingLengthRule>();
-builder.Services.AddSingleton<ICourtBookingRule, MaxPeakTimeBookingLengthRule>();
-builder.Services.AddScoped<ICourtBookingRule, MemberBookingsMustNotOverlapRule>(); //it depends on ICourtBookingService which is scoped
-builder.Services.AddScoped<ICourtBookingRule, MemberCourtBookingsMaxHoursPerDayRule>(); //it depends on ICourtBookingService which is scoped
+builder.Services.AddBookingRules();
 
 //Forwarding registration by using implementation factory
 builder.Services.TryAddSingleton<IBookingConfiguration>(sp =>
