@@ -9,11 +9,16 @@ namespace TennisBookings.DependencyInjection
 		public static IServiceCollection AddBookingRules(this IServiceCollection services)
 		{
 			//registering multiple implementations of ICourtBookingInterface -->>>>>>>>> HERE WE USE "ADD" BECAUSE WE WANT ALL IMPLEMENTATIONS
-			services.AddSingleton<ICourtBookingRule, ClubIsOpenRule>();
-			services.AddSingleton<ICourtBookingRule, MaxBookingLengthRule>();
-			services.AddSingleton<ICourtBookingRule, MaxPeakTimeBookingLengthRule>();
-			services.AddScoped<ICourtBookingRule, MemberBookingsMustNotOverlapRule>(); //it depends on ICourtBookingService which is scoped
-			services.AddScoped<ICourtBookingRule, MemberCourtBookingsMaxHoursPerDayRule>(); //it depends on ICourtBookingService which is scoped
+			//services.AddSingleton<ICourtBookingRule, ClubIsOpenRule>();
+			//services.AddSingleton<ICourtBookingRule, MaxBookingLengthRule>();
+			//services.AddSingleton<ICourtBookingRule, MaxPeakTimeBookingLengthRule>();
+			//services.AddScoped<ICourtBookingRule, MemberBookingsMustNotOverlapRule>(); //it depends on ICourtBookingService which is scoped
+			//services.AddScoped<ICourtBookingRule, MemberCourtBookingsMaxHoursPerDayRule>(); //it depends on ICourtBookingService which is scoped
+
+			services.Scan(scan=>scan.FromAssemblyOf<ICourtBookingRule>()
+				.AddClasses(c=>c.AssignableTo<ICourtBookingRule>())
+				.AsImplementedInterfaces()
+				.WithScopedLifetime());	
 
 			services.TryAddScoped<IBookingRuleProcessor, BookingRuleProcessor>();
 
