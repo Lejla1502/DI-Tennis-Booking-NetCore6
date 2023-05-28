@@ -117,6 +117,8 @@ builder.Services.Configure<ClubConfiguration>(builder.Configuration.GetSection("
 //custom made rule
 builder.Services.AddSingleton<ICourtBookingRule, DateTimeBookingMadeInFuture>();
 
+builder.Services.AddScoped<ICourtMaintenanceService, CourtMaintenanceService>();
+
 
 //builder.Services.AddScoped<IUnavailabilityProvider, ClubClosedUnavailabilityProvider>();
 //builder.Services.AddScoped<IUnavailabilityProvider, CourtBookingUnavailabilityProvider>();
