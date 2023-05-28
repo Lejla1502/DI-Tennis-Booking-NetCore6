@@ -27,6 +27,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using TennisBookings.Services.Membership;
 using TennisBookings.DependencyInjection;
+using TennisBookings.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -195,6 +196,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<LastRequestMiddleware>();
 
 app.MapControllerRoute(
 	name: "default",
