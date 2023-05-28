@@ -120,6 +120,8 @@ builder.Services.AddSingleton<ICourtBookingRule, DateTimeBookingMadeInFuture>();
 
 builder.Services.AddScoped<ICourtMaintenanceService, CourtMaintenanceService>();
 
+builder.Services.TryAddScoped<LastRequestMiddleware>();
+
 
 //builder.Services.AddScoped<IUnavailabilityProvider, ClubClosedUnavailabilityProvider>();
 //builder.Services.AddScoped<IUnavailabilityProvider, CourtBookingUnavailabilityProvider>();

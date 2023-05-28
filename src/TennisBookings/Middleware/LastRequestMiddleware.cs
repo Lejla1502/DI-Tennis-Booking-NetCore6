@@ -1,34 +1,34 @@
 namespace TennisBookings.Middleware
 {
-	public class LastRequestMiddleware 
+		public class LastRequestMiddleware : IMiddleware
 	{
-		private readonly RequestDelegate _next;
 		private readonly IUtcTimeService _utcTimeService;
+		private readonly UserManager<TennisBookingsUser> _userManager;
 
-		public LastRequestMiddleware(RequestDelegate next,
-			IUtcTimeService utcTimeService)
+		public LastRequestMiddleware(
+			IUtcTimeService utcTimeService,
+			UserManager<TennisBookingsUser> userManager)
 		{
-			_next = next;
 			_utcTimeService = utcTimeService;
+			_userManager = userManager;
 		}
 
-		public async Task InvokeAsync(HttpContext context, 
-			UserManager<TennisBookingsUser> userManager)
+		public async Task InvokeAsync(HttpContext context, RequestDelegate next)
 		{
 			if (context.User.Identity is not null &&
 				context.User.Identity.IsAuthenticated)
 			{
-				var user = await userManager
+				var user = await _userManager
 					.FindByNameAsync(context.User.Identity.Name);
 
 				if (user is not null)
 				{
 					user.LastRequestUtc = _utcTimeService.CurrentUtcDateTime;
-					await userManager.UpdateAsync(user);
+					await _userManager.UpdateAsync(user);
 				}
 			}
 
-			await _next(context);
+			await next(context);
 		}
 	}
 
