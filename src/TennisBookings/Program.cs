@@ -29,8 +29,20 @@ using TennisBookings.Services.Membership;
 using TennisBookings.DependencyInjection;
 using TennisBookings.Middleware;
 using TennisBookings.Services;
+using Autofac.Extensions.DependencyInjection;
+using Autofac;
 
 var builder = WebApplication.CreateBuilder(args);
+//replacing DIC with Autofac
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+
+builder.Host.ConfigureContainer<ContainerBuilder>(builder =>
+{
+	builder.RegisterType<RandomWeatherForecaster>()
+		.As<IWeatherForecaster>()
+		.SingleInstance();
+	builder.RegisterDecorator<CachedWeatherForecaster, IWeatherForecaster>();
+});
 
 
 

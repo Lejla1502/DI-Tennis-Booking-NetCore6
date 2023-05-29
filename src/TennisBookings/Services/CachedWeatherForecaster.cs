@@ -18,7 +18,7 @@ namespace TennisBookings.Services
 		}	
 		public async Task<WeatherResult> GetCurrentWeatherAsync(string city)
 		{
-			var cacheKey = $"weather_{city}_{_timeService.CurrentUtcDateTime:yyyy_MM-dd}";
+			 var cacheKey = $"weather_{city}_{_timeService.CurrentUtcDateTime:yyyy_MM-dd}";
 
 			var (isCached, forecast) = await _cache.TryGetValueAsync(cacheKey);
 
