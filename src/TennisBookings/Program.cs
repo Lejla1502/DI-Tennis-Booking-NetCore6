@@ -28,6 +28,7 @@ using Microsoft.Extensions.Options;
 using TennisBookings.Services.Membership;
 using TennisBookings.DependencyInjection;
 using TennisBookings.Middleware;
+using TennisBookings.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -121,6 +122,8 @@ builder.Services.AddSingleton<ICourtBookingRule, DateTimeBookingMadeInFuture>();
 builder.Services.AddScoped<ICourtMaintenanceService, CourtMaintenanceService>();
 
 builder.Services.TryAddScoped<LastRequestMiddleware>();
+
+builder.Services.Decorate<IWeatherForecaster, CachedWeatherForecaster>();
 
 
 //builder.Services.AddScoped<IUnavailabilityProvider, ClubClosedUnavailabilityProvider>();
